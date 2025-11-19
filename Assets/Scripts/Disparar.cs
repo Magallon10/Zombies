@@ -14,7 +14,7 @@ public class Disparar : MonoBehaviour
     public float rangoMaximo = 100f;     // Rango máximo para la puntería
     public float rangoDeDisparo = 150f;  // Rango máximo para el proyectil
 
-    private int puntos = 0;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
