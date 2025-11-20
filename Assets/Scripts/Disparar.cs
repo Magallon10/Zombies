@@ -14,11 +14,13 @@ public class Disparar : MonoBehaviour
     public float rangoMaximo = 100f;     // Rango máximo para la puntería
     public float rangoDeDisparo = 150f;  // Rango máximo para el proyectil
 
+    public int daño;
+
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        daño = 25;
     }
 
     // Update is called once per frame
@@ -75,14 +77,14 @@ public class Disparar : MonoBehaviour
                 {
                   
                     GetComponent<ControladorPlayer>().puntos += 300;
-                    objetoImpactado.GetComponentInParent<ControladorZombie>().HacerDaño(50);
+                    objetoImpactado.GetComponentInParent<ControladorZombie>().HacerDaño(daño * 2);
 
                 }
                 else if (objetoImpactado.name == "Body_01_tanktop")
                 {
                    
                     GetComponent<ControladorPlayer>().puntos += 100;
-                    objetoImpactado.GetComponentInParent<ControladorZombie>().HacerDaño(25);
+                    objetoImpactado.GetComponentInParent<ControladorZombie>().HacerDaño(daño);
 
                 }
             }

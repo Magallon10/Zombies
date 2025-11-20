@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ControladorZombie : MonoBehaviour
 {
@@ -11,12 +12,14 @@ public class ControladorZombie : MonoBehaviour
     public float rangoAtaque = 1.2f;
     float tiempoEntreAtaques = 2f;
     private float tiempoSiguienteAtaque;
+    private bool muerto;
     private Animator animator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         float vidaBase = 100f;     
         float factorCrecimiento = 0.07f;
+        muerto = false;
         float vida = vidaBase * Mathf.Pow(1f + factorCrecimiento, ronda - 1);
         tiempoSiguienteAtaque = Time.time;
         jugadorTransform = jugador.transform;
@@ -29,7 +32,7 @@ public class ControladorZombie : MonoBehaviour
 
         float distancia = Vector3.Distance(transform.position, jugadorTransform.position);
 
-        if (distancia <= rangoAtaque && Time.time >= tiempoSiguienteAtaque)
+        if (distancia <= rangoAtaque && Time.time >= tiempoSiguienteAtaque && !muerto)
         {
             AtacarJugador();
         }
@@ -55,6 +58,8 @@ public class ControladorZombie : MonoBehaviour
     {
         
         animator.SetBool("Muerto", true);
+        GetComponent<Collider>().enabled = false;
+        GetComponentInParent<NavMeshAgent>().enabled = false;
         StartCoroutine(MorirDespues());
     }
 

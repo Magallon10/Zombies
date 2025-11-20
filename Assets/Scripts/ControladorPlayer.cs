@@ -21,8 +21,8 @@ public class ControladorPlayer : MonoBehaviour
     public float jumpSpeed = 8.0F;
     public float speed = 6.0f;
     public float gravity = 20.0F;
-    private float vidaMax = 100f;
-    private float vida = 100f;
+    public float vidaMax = 100f;
+    public float vida = 100f;
     public int puntos = 0;
     private Coroutine regenerando;
     public TMP_Text textoVida;
@@ -124,7 +124,6 @@ public class ControladorPlayer : MonoBehaviour
 
         regenerando = null;
     }
-            
     public void ZombieMuerto()
     {
         contadorBajas++;
