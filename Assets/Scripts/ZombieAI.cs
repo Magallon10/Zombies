@@ -5,7 +5,7 @@ public class ZombieAI : MonoBehaviour
 {
     private NavMeshAgent agente;
     private float speed;
-    public Transform objetivoJugador; 
+    private Transform objetivoJugador; 
     public float frecuenciaActualizacion = 0.5f; 
     private float ultimoTiempoActualizado; 
     private Animator animator;
@@ -36,13 +36,11 @@ public class ZombieAI : MonoBehaviour
     {
         speed = agente.velocity.magnitude;
 
-        // 2. Lógica de Actualización de Ruta
-        if (objetivoJugador != null)
+        if (objetivoJugador != null && !gameObject.GetComponent<ControladorZombie>().muerto)
         {
             // Solo actualiza la ruta cada 0.5 segundos para optimizar el rendimiento.
             if (Time.time >= ultimoTiempoActualizado + frecuenciaActualizacion)
             {
-                // La función clave: le dice al NavMeshAgent que calcule la ruta y se mueva.
                 agente.SetDestination(objetivoJugador.position);
                 ultimoTiempoActualizado = Time.time;
             }

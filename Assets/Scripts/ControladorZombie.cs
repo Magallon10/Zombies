@@ -7,16 +7,17 @@ public class ControladorZombie : MonoBehaviour
 
     public int vida;
     public int ronda;
-    public GameObject jugador;
+    private GameObject jugador;
     private Transform jugadorTransform;
     public float rangoAtaque = 1.2f;
     float tiempoEntreAtaques = 2f;
     private float tiempoSiguienteAtaque;
-    private bool muerto;
+    public bool muerto;
     private Animator animator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        jugador = GameObject.Find("Player");
         float vidaBase = 100f;     
         float factorCrecimiento = 0.07f;
         muerto = false;
@@ -58,7 +59,12 @@ public class ControladorZombie : MonoBehaviour
     {
         
         animator.SetBool("Muerto", true);
-        GetComponent<Collider>().enabled = false;
+        muerto = true;
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider col in colliders)
+        {
+            col.enabled = false;
+        }
         GetComponentInParent<NavMeshAgent>().enabled = false;
         StartCoroutine(MorirDespues());
     }
