@@ -9,6 +9,7 @@ TagManager:
   - "PocionDa\xF1o"
   - Pocionvida
   - PocionVida
+  - SpawnZombie
   layers:
   - Default
   - TransparentFX

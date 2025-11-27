@@ -7,6 +7,7 @@ public class ControladorPlayer : MonoBehaviour
 {
     [Header("Referencias")]
     public Camera camaraFPS;              // La cámara principal del jugador
+    public Camera camaraTrasera;          // La cámara trasera
     public Transform puntoDeDisparo;      // Objeto vacío en la boca del cañón
 
     [Header("Parámetros")]
@@ -91,6 +92,17 @@ public class ControladorPlayer : MonoBehaviour
 
         // Mover el personaje
         controller.Move(moveDirection * Time.deltaTime);
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            camaraFPS.enabled = false;
+            camaraTrasera.enabled = true;
+        }
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            camaraFPS.enabled = true;
+            camaraTrasera.enabled = false;
+        }
     }
 
     public void HerirPlayer()

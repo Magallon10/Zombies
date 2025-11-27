@@ -6,7 +6,6 @@ public class ControladorZombie : MonoBehaviour
 {
 
     public int vida;
-    public int ronda;
     private GameObject jugador;
     private Transform jugadorTransform;
     public float rangoAtaque = 1.2f;
@@ -21,7 +20,7 @@ public class ControladorZombie : MonoBehaviour
         float vidaBase = 100f;     
         float factorCrecimiento = 0.07f;
         muerto = false;
-        float vida = vidaBase * Mathf.Pow(1f + factorCrecimiento, ronda - 1);
+        float vida = vidaBase * Mathf.Pow(1f + factorCrecimiento, jugador.GetComponent<CrearZombies>().ronda - 1);
         tiempoSiguienteAtaque = Time.time;
         jugadorTransform = jugador.transform;
         animator = gameObject.GetComponent<Animator>();
@@ -60,6 +59,8 @@ public class ControladorZombie : MonoBehaviour
         
         animator.SetBool("Muerto", true);
         muerto = true;
+        jugador.GetComponent<CrearZombies>().zombiesActuales--;
+        jugador.GetComponent<CrearZombies>().zombiesRonda--;
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (Collider col in colliders)
         {
