@@ -9,20 +9,26 @@ public class ZombieAI : MonoBehaviour
     public float frecuenciaActualizacion = 0.5f; 
     private float ultimoTiempoActualizado; 
     private Animator animator;
+    private bool pausado;
+
+    private GameObject jugador;
 
     void Start()
     {
         agente = GetComponentInParent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         
+        
         // 1. Encontrar al Jugador
         if (objetivoJugador == null)
         {
-            GameObject player = GameObject.Find("Player");
-            if (player != null)
+            jugador = GameObject.Find("Player");
+            
+            if (jugador != null)
             {
-                objetivoJugador = player.transform;
+                objetivoJugador = jugador.transform;
             }
+            
         }
         
         // Configuración inicial para forzar la primera actualización
@@ -34,18 +40,23 @@ public class ZombieAI : MonoBehaviour
 
     void Update()
     {
-        speed = agente.velocity.magnitude;
-
-        if (objetivoJugador != null && !gameObject.GetComponent<ControladorZombie>().muerto)
+        pausado = jugador.GetComponent<ControladorPlayer>().pausado;
+        if (!pausado)
         {
-            // Solo actualiza la ruta cada 0.5 segundos para optimizar el rendimiento.
-            if (Time.time >= ultimoTiempoActualizado + frecuenciaActualizacion)
+            speed = agente.velocity.magnitude;
+
+            if (objetivoJugador != null && !gameObject.GetComponent<ControladorZombie>().muerto)
             {
-                agente.SetDestination(objetivoJugador.position);
-                ultimoTiempoActualizado = Time.time;
+                // Solo actualiza la ruta cada 0.5 segundos para optimizar el rendimiento.
+                if (Time.time >= ultimoTiempoActualizado + frecuenciaActualizacion)
+                {
+                    agente.SetDestination(objetivoJugador.position);
+                    ultimoTiempoActualizado = Time.time;
+                }
             }
+            animator.SetFloat("Speed",speed);
         }
-        animator.SetFloat("Speed",speed);
+        
 
     }
 }

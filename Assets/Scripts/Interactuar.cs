@@ -11,13 +11,15 @@ public class Interactuar: MonoBehaviour
     private GameObject puertaActual = null;
     private GameObject pocionVidaActual = null;
     private GameObject pocionDañoActual= null;
-   
+    private GameObject antorchaActual = null;
+    private GameObject portal;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         textoMensaje.enabled = false;
+        portal = GameObject.Find("Portal");
     }
 
     // Update is called once per frame
@@ -56,6 +58,20 @@ public class Interactuar: MonoBehaviour
             }
             
         }
+         if (antorchaActual != null && Input.GetKeyDown(KeyCode.E))
+        {
+            Color colorNuevo = new Color32(0, 93, 251, 255);
+            if(antorchaActual.GetComponentInChildren<Light>().color != colorNuevo)
+            {
+                antorchaActual.GetComponentInChildren<Light>().color = colorNuevo;
+                var main = antorchaActual.GetComponentInChildren<ParticleSystem>().main;
+                main.startColor = colorNuevo;
+                portal.GetComponent<EasterEgg>().antorchasEncendidas++;
+            }
+            
+            
+        }
+    
 
     }
 
@@ -100,6 +116,16 @@ public class Interactuar: MonoBehaviour
                     return; 
                 }
             }
+            if (hit.transform.CompareTag("Antorcha"))
+            {
+                GameObject antorcha = hit.collider.gameObject;
+                if (antorcha != null)
+                {
+                    antorchaActual = antorcha;
+                    
+                    return; 
+                }
+            }
         }
 
         if (puertaActual != null)
@@ -117,6 +143,8 @@ public class Interactuar: MonoBehaviour
             pocionVidaActual = null;
             textoMensaje.enabled = false;
         }
+
+        textoMensaje.enabled = false;
         
     }
 

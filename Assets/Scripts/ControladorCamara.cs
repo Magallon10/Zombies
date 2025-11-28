@@ -8,17 +8,17 @@ public class ControladorCamara : MonoBehaviour
     [SerializeField]
     public float smoothing = 2.0f;
     // the chacter is the capsule
-    public GameObject character;
+    public GameObject jugador;
     // get the incremental value of mouse moving
     private Vector2 mouseLook;
     // smooth the mouse moving
     private Vector2 smoothV;
-
+    private bool pausado;
     // Use this for initialization
     void Start()
     {
 
-        character = this.transform.parent.gameObject;
+        jugador = this.transform.parent.gameObject;
         
         //Bloquear ratón
         Cursor.lockState = CursorLockMode.Locked;
@@ -28,7 +28,12 @@ public class ControladorCamara : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Movimiento cámara
+       
+        pausado = jugador.GetComponent<ControladorPlayer>().pausado;
+        if (!pausado)
+        {
+            
+            //Movimiento cámara
         // md is mosue delta
         var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
         md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
@@ -40,25 +45,14 @@ public class ControladorCamara : MonoBehaviour
 
         // vector3.right means the x-axis
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
-        character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
+        jugador.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, jugador.transform.up);
 
 
         //Desbloquear ratón
         // Si el jugador presiona Escape
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            // Si está bloqueado, desbloquear
-            if (Cursor.lockState == CursorLockMode.Locked)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            // Si está libre, volver a bloquear
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+       
+            
         }
+        
     }
 }

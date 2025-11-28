@@ -10,6 +10,7 @@ TagManager:
   - Pocionvida
   - PocionVida
   - SpawnZombie
+  - Antorcha
   layers:
   - Default
   - TransparentFX

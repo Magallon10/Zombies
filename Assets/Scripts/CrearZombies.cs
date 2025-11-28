@@ -20,6 +20,8 @@ public class CrearZombies : MonoBehaviour
     private float tiempoRespawnBase = 4f;
     public TMP_Text textoRonda;
 
+    private bool pausado;
+
     
 
     void Start()
@@ -37,6 +39,7 @@ public class CrearZombies : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        pausado = GetComponent<ControladorPlayer>().pausado;
         textoRonda.text = "Ronda: "+ronda;
     }
 

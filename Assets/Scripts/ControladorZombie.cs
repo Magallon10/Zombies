@@ -13,6 +13,7 @@ public class ControladorZombie : MonoBehaviour
     private float tiempoSiguienteAtaque;
     public bool muerto;
     private Animator animator;
+    private bool pausado;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,18 +25,24 @@ public class ControladorZombie : MonoBehaviour
         tiempoSiguienteAtaque = Time.time;
         jugadorTransform = jugador.transform;
         animator = gameObject.GetComponent<Animator>();
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        float distancia = Vector3.Distance(transform.position, jugadorTransform.position);
-
-        if (distancia <= rangoAtaque && Time.time >= tiempoSiguienteAtaque && !muerto)
+         pausado = jugador.GetComponent<ControladorPlayer>().pausado;
+        if (!pausado)
         {
-            AtacarJugador();
+            float distancia = Vector3.Distance(transform.position, jugadorTransform.position);
+
+            if (distancia <= rangoAtaque && Time.time >= tiempoSiguienteAtaque && !muerto)
+            {
+                AtacarJugador();
+            }
         }
+
+        
     }
 
     void AtacarJugador()

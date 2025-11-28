@@ -29,23 +29,53 @@ public class ControladorPlayer : MonoBehaviour
     public TMP_Text textoVida;
     public TMP_Text textoPuntos;
     public TMP_Text textoGameOver;
+    public TMP_Text textoPausa;
     public Canvas hud;
     public Canvas gameOver;
+    public Canvas canvasPausa;
     private Vector3 moveDirection = Vector3.zero;
     public ParticleSystem flashDisparo;
     private int contadorBajas;
+
+    public bool pausado;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         controller = GetComponent<CharacterController>();
         gameOver.enabled = false;
+        canvasPausa.enabled = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        //Visualizar vida y puntos
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pausado = !pausado;
+            if (pausado)
+            { 
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                textoPausa.text = "Zombies matados: "+ contadorBajas;
+                canvasPausa.enabled = true;
+                hud.enabled = false;
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                ReaunudarJuego();
+            }
+            
+           
+        }
+
+        if (!pausado)
+        {
+             //Visualizar vida y puntos
         textoVida.text = "Vida: " + Mathf.RoundToInt(vida);
         textoPuntos.text = "Puntos: " + puntos;
 
@@ -103,6 +133,10 @@ public class ControladorPlayer : MonoBehaviour
             camaraFPS.enabled = true;
             camaraTrasera.enabled = false;
         }
+        }
+       
+        
+        
     }
 
     public void HerirPlayer()
@@ -146,6 +180,16 @@ public class ControladorPlayer : MonoBehaviour
         hud.enabled = false;
         gameOver.enabled = true;
         
+    }
+
+    public void ReaunudarJuego()
+    {
+        pausado = false;
+        canvasPausa.enabled = false;
+        hud.enabled = true;
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
    
 }
