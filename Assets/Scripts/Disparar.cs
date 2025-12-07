@@ -32,29 +32,24 @@ public class Disparar : MonoBehaviour
     public void Disparo()
     {
         RaycastHit hitPunteria;
-        Vector3 objetivo; // El punto final al que debe apuntar el disparo
+        Vector3 objetivo; 
 
-        // 1. Raycast de Puntería (Desde el centro de la cámara)
         if (Physics.Raycast(camaraFPS.transform.position, camaraFPS.transform.forward, out hitPunteria, rangoMaximo))
         {
-            // El jugador está apuntando a un objeto.
-            // Establece el objetivo como el punto de impacto.
+         
             objetivo = hitPunteria.point;
         }
         else
         {
-            // El jugador no está apuntando a un objeto dentro del rango (al aire).
-            // Establece el objetivo como un punto lejano en la dirección de la cámara.
+
             objetivo = camaraFPS.transform.position + camaraFPS.transform.forward * rangoMaximo;
         }
 
-        // --- Lógica del Disparo Real ---
-
+  
         RaycastHit hitDisparo;
         Vector3 direccionDisparo = (objetivo - puntoDeDisparo.position).normalized;
 
-        // 2. Raycast de Disparo (Desde la boca del cañón hacia el objetivo)
-        // La distancia será la distancia entre el arma y el objetivo, o el rango de disparo, el que sea menor.
+
         float distancia = Vector3.Distance(puntoDeDisparo.position, objetivo);
         distancia = Mathf.Min(distancia, rangoDeDisparo);
         flashDisparo.Play();
@@ -64,13 +59,8 @@ public class Disparar : MonoBehaviour
         if (Physics.Raycast(puntoDeDisparo.position, direccionDisparo, out hitDisparo, distancia))
         {
             GameObject objetoImpactado = hitDisparo.collider.gameObject;
-            // El disparo ha impactado con un Collider
-            Debug.Log("Disparo impactó en: " + objetoImpactado.name);
 
-             
-
-
-            // Verificamos si pertenece a un zombie
+ 
             if (objetoImpactado.CompareTag("Enemigo"))
             {
                 if (objetoImpactado.name == "Bip001")
@@ -90,13 +80,8 @@ public class Disparar : MonoBehaviour
             }
 
             
-
-            // Puedes usar hitDisparo.point y hitDisparo.normal para efectos y decals.
         }
-        else
-        {
-            Debug.Log("El disparo salió del arma pero no golpeó nada.");
-        }
+        
     }
 
     IEnumerator MostrarTracer(Vector3 inicio, Vector3 fin)

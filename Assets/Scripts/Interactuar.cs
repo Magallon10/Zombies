@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Interactuar: MonoBehaviour
 {
@@ -12,9 +13,19 @@ public class Interactuar: MonoBehaviour
     private GameObject pocionVidaActual = null;
     private GameObject pocionDañoActual= null;
     private GameObject antorchaActual = null;
+     private GameObject pocionFinalActual = null;
+    
+    public Canvas goodEnding;
+    public TMP_Text textoGoodEnding;
+    public TMP_Text textoContadorZombies;
     private GameObject portal;
     
 
+    void Awake()
+    {
+        // Suscribirse al evento para reasignar referencias tras cargar una escena
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -46,6 +57,19 @@ public class Interactuar: MonoBehaviour
                 Comprar(500);
                 Destroy(pocionVidaActual);
             }
+            
+        }
+        if (pocionFinalActual != null && Input.GetKeyDown(KeyCode.E))
+        {
+            
+             
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            textoContadorZombies.text = "Zombies matados: "+ GetComponent<ControladorPlayer>().contadorBajas;
+            goodEnding.enabled = true;
+            GetComponent<ControladorPlayer>().hud.enabled = false;
+            Time.timeScale = 0f;
+            
             
         }
         if (pocionDañoActual != null && Input.GetKeyDown(KeyCode.E))
@@ -116,6 +140,17 @@ public class Interactuar: MonoBehaviour
                     return; 
                 }
             }
+            if (hit.transform.CompareTag("PocionFinal"))
+            {
+                GameObject pocion = hit.transform.parent.gameObject.transform.parent.gameObject;
+                if (pocion != null)
+                {
+                    pocionFinalActual = pocion;
+                    textoMensaje.text = "E para terminar la partida";
+                    textoMensaje.enabled = true;
+                    return; 
+                }
+            }
             if (hit.transform.CompareTag("Antorcha"))
             {
                 GameObject antorcha = hit.collider.gameObject;
@@ -151,6 +186,31 @@ public class Interactuar: MonoBehaviour
     public void Comprar(int precio)
     {
         gameObject.GetComponent<ControladorPlayer>().puntos -= precio;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Mapa1" || scene.name == "EasterEgg")
+        {
+
+            goodEnding = GameObject.Find("GoodEnding").GetComponent<Canvas>();
+            
+            textoMensaje = GameObject.Find("TextoPuertas").GetComponent<TMP_Text>(); 
+            textoGoodEnding = GameObject.Find("TextoGoodEnding").GetComponent<TMP_Text>(); 
+            textoContadorZombies = GameObject.Find("TextoContadorZombies").GetComponent<TMP_Text>(); 
+            
+            camaraFPS = GameObject.Find("PrimeraPersona").GetComponent<Camera>(); 
+            
+            portal = GameObject.Find("Portal");
+            
+            // Ocultar los textos de estado final al inicio
+            goodEnding.enabled = false;
+            textoMensaje.enabled = false;
+        }
+        if (scene.name == "MenuInicial")
+        {
+             SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
     }
     
 }

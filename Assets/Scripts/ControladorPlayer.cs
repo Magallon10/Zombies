@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ControladorPlayer : MonoBehaviour
 {
     [Header("Referencias")]
     public Camera camaraFPS;              // La cámara principal del jugador
-    public Camera camaraTrasera;          // La cámara trasera
+    public Camera camaraTrasera;          // La cámara traseraç
+    public Camera camaraPistaEasterEgg;
     public Transform puntoDeDisparo;      // Objeto vacío en la boca del cañón
 
     [Header("Parámetros")]
@@ -16,7 +18,7 @@ public class ControladorPlayer : MonoBehaviour
 
     private ControladorZombie controladorZombie;
 
-
+    public static ControladorPlayer Instance;
 
     private CharacterController controller;
     public float jumpSpeed = 8.0F;
@@ -32,21 +34,38 @@ public class ControladorPlayer : MonoBehaviour
     public TMP_Text textoPausa;
     public Canvas hud;
     public Canvas gameOver;
+    public Canvas goodEnding;
     public Canvas canvasPausa;
     private Vector3 moveDirection = Vector3.zero;
     public ParticleSystem flashDisparo;
-    private int contadorBajas;
+    public int contadorBajas;
+
 
     public bool pausado;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
+        if (Instance == null)
+        {
+    
+            Instance = this;
+            
+           
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
         controller = GetComponent<CharacterController>();
         gameOver.enabled = false;
         canvasPausa.enabled = false;
+        goodEnding.enabled = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -127,11 +146,25 @@ public class ControladorPlayer : MonoBehaviour
         {
             camaraFPS.enabled = false;
             camaraTrasera.enabled = true;
+            camaraPistaEasterEgg.enabled = false;
         }
         if (Input.GetKeyUp(KeyCode.Q))
         {
             camaraFPS.enabled = true;
             camaraTrasera.enabled = false;
+        }
+
+         if (Input.GetKeyDown(KeyCode.T))
+        {
+            camaraFPS.enabled = false;
+            camaraTrasera.enabled = false;
+            camaraPistaEasterEgg.enabled = true;
+        }
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            camaraFPS.enabled = true;
+            camaraTrasera.enabled = false;
+            camaraPistaEasterEgg.enabled = false;
         }
         }
        
@@ -176,6 +209,9 @@ public class ControladorPlayer : MonoBehaviour
     }
     void GameOver()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 0f;
         textoGameOver.text = "Zombies matados: " + contadorBajas;
         hud.enabled = false;
         gameOver.enabled = true;
@@ -190,6 +226,105 @@ public class ControladorPlayer : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+   public void IniciarOReinciarJuego()
+{
+    Time.timeScale = 1f;
+    SceneManager.LoadScene("Mapa1");
+}
+
+public void InicializarTodoElJuego()
+{
+    // 1. Resetear variables del Player
+    vidaMax = 100f;
+    vida = 100f;
+    puntos = 0;
+    contadorBajas = 0;
+    pausado = false;
+    GetComponent<Disparar>().daño = 25;
+    
+    CrearZombies creador = GetComponent<CrearZombies>();
+    if (creador != null)
+    {
+        creador.InicializarZombiesEnEscena(); 
+    }
+}
+
+private IEnumerator ReiniciarJuegoCoroutine()
+{
+    Time.timeScale = 1f;
+
+    vidaMax = 100f;
+    vida = 100f;
+    puntos = 0;
+    contadorBajas = 0;
+    pausado = false;
+    GetComponent<Disparar>().daño = 25;
+
+    SceneManager.LoadScene("Mapa1");
+
+    yield return null; 
+    
+    CrearZombies creador = GetComponent<CrearZombies>();
+
+    creador.InicializarZombiesEnEscena();
+    
+}
+
+    public void SalirAlMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MenuInicial");
+        Destroy(gameObject);
+       
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Comprobar si la escena recién cargada es la que NO debe contener este objeto.
+        if (scene.name == "MenuInicial")
+        {
+            Time.timeScale = 1f;
+            SceneManager.sceneLoaded -= OnSceneLoaded; 
+            // gameOver.enabled = false;
+            // canvasPausa.enabled = false;
+            // goodEnding.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            // Destroy(this.gameObject);
+            // Destroy(hud);
+            // Destroy(gameOver);
+            // Destroy(goodEnding);
+            // Destroy(canvasPausa);
+        }
+        if (scene.name == "Mapa1" || scene.name == "EasterEgg")
+        {
+        
+        hud = GameObject.Find("HUD").GetComponent<Canvas>(); 
+        gameOver = GameObject.Find("Game over").GetComponent<Canvas>();
+        goodEnding = GameObject.Find("GoodEnding").GetComponent<Canvas>();
+        canvasPausa = GameObject.Find("Pausa").GetComponent<Canvas>(); 
+        
+        textoVida = GameObject.Find("TextoVida").GetComponent<TMP_Text>();
+        textoPuntos = GameObject.Find("TextoPuntos").GetComponent<TMP_Text>();
+        textoGameOver = GameObject.Find("TextoGameOver").GetComponent<TMP_Text>();
+        textoPausa = GameObject.Find("TextoPausa").GetComponent<TMP_Text>();
+
+       
+        gameOver.enabled = false;
+        canvasPausa.enabled = false;
+        goodEnding.enabled = false;
+        hud.enabled = true; 
+
+        
+        InicializarTodoElJuego();
+        
+       
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Time.timeScale = 1f;
+    }
     }
    
 }
